@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import { Button, Form, FormGroup, Input, Label } from 'reactstrap';
 
 class Signin extends React.Component {
     constructor(props) {
@@ -28,27 +29,29 @@ class Signin extends React.Component {
     }
     render() {
         return (
-            <form onSubmit={this.submit}>
-                <div>
-                    <label>Username</label>
-                    <input 
+            <Form onSubmit={this.submit}>
+                <FormGroup>
+                    <Label>Username</Label>
+                    <Input
+                        style={{width: "300px", margin: '0 auto'}}
                         type='text'
                         name='username'
                         value={this.state.username}
                         onChange={this.handleChange}
                     />
-                </div>
-                <div>
-                    <label>Password</label>
-                    <input 
+                </FormGroup>
+                <FormGroup>
+                    <Label>Password</Label>
+                    <Input
+                        style={{width: "300px", margin: '0 auto'}}
                         type='password'
                         name='password'
                         value={this.state.password}
                         onChange={this.handleChange}
                     />
-                </div>
-                <button type='submit'>Login</button>
-            </form>
+                </FormGroup>
+                <Button type='submit'>Login</Button>
+            </Form>
         )
     }
 };
