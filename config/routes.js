@@ -1,6 +1,11 @@
 const axios = require('axios');
-
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const knex = require('knex');
 const { authenticate } = require('./middlewares');
+
+const dbConfig = require('../knexfile');
+const db = knex(dbConfig.development);
 
 module.exports = server => {
   server.post('/api/register', register);
@@ -8,8 +13,36 @@ module.exports = server => {
   server.get('/api/jokes', authenticate, getJokes);
 };
 
+generateToken = user => {
+  const secret = 'Why can’t banks keep secrets? There are too many tellers!';
+  const payload = {
+    username: user.username,
+    password: user.password
+  }
+  const options = {
+    expiresIn: '1h',
+    jwtid: "fsw12"
+  }
+  return jwt.sign(payload, secret, options);
+}
+
 function register(req, res) {
-  // implement user registration
+  const creds = req.body;
+  const hash = bcrypt.hashSync(creds.password, 10);
+  creds.password = hash;
+  if ( !creds || !creds.username || !creds.password) {
+    res.status(400).json({
+      message: "Both username and password are required."
+    })
+  } else {
+    db('users')
+      .insert(creds)
+      .then( user => {
+        const token = generateToken(user);
+        res.status(201).json({ id: user.id, token });
+      })
+      .catch( err => { res.status(500).json( err.message )});
+  }
 }
 
 function login(req, res) {
